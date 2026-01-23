@@ -1,0 +1,120 @@
+{{!-- API Test Generator (Vitest + MSW) --}}
+import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { setupServer } from 'msw/node';
+import { http, HttpResponse } from 'msw';
+import { renderHook, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { baseApi } from '../../../store/api/baseApi';
+import {
+useGet{{plural}}Query,
+useGet{{pascalCase entity}}Query,
+useCreate{{pascalCase entity}}Mutation,
+useUpdate{{pascalCase entity}}Mutation,
+useDelete{{pascalCase entity}}Mutation,
+} from '../../../store/{{camelCase entity}}/{{camelCase entity}}Api';
+import type { {{pascalCase entity}} } from '../../../types/{{camelCase entity}}';
+
+const mock{{pascalCase entity}}: {{pascalCase entity}} = {
+id: '1',
+{{#each fields}}
+{{#ifNeq name 'id'}}
+{{#ifNeq type 'computed'}}
+{{name}}: {{defaultValue}},
+{{/ifNeq}}
+{{/ifNeq}}
+{{/each}}
+};
+
+const server = setupServer(
+http.get('{{apiEndpoint}}', () => {
+return HttpResponse.json({
+data: [mock{{pascalCase entity}}],
+success: true,
+meta: { total: 1, page: 1, limit: 20 },
+});
+}),
+
+http.get('{{apiEndpoint}}/:id', ({ params }) => {
+return HttpResponse.json({
+data: mock{{pascalCase entity}},
+success: true,
+});
+}),
+
+http.post('{{apiEndpoint}}', async ({ request }) => {
+const body = await request.json();
+return HttpResponse.json({
+data: { ...mock{{pascalCase entity}}, ...body },
+success: true,
+});
+}),
+
+http.put('{{apiEndpoint}}/:id', async ({ params, request }) => {
+const body = await request.json();
+return HttpResponse.json({
+data: { ...mock{{pascalCase entity}}, ...body },
+success: true,
+});
+}),
+
+http.delete('{{apiEndpoint}}/:id', () => {
+return HttpResponse.json({
+success: true,
+});
+})
+);
+
+const createTestStore = () =>
+configureStore({
+reducer: {
+[baseApi.reducerPath]: baseApi.reducer,
+},
+middleware: (getDefaultMiddleware) =>
+getDefaultMiddleware().concat(baseApi.middleware),
+});
+
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+<Provider store={createTestStore()}>{children}</Provider>
+);
+
+describe('{{camelCase entity}}Api', () => {
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+describe('useGet{{plural}}Query', () => {
+it('should fetch {{camelCase entity}} list', async () => {
+const { result } = renderHook(() => useGet{{plural}}Query({ page: 1 }), { wrapper });
+
+await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+expect(result.current.data?.data).toHaveLength(1);
+expect(result.current.data?.data[0].id).toBe('1');
+});
+});
+
+describe('useGet{{pascalCase entity}}Query', () => {
+it('should fetch single {{camelCase entity}}', async () => {
+const { result } = renderHook(() => useGet{{pascalCase entity}}Query('1'), { wrapper });
+
+await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+expect(result.current.data?.data.id).toBe('1');
+});
+});
+
+describe('useCreate{{pascalCase entity}}Mutation', () => {
+it('should create a new {{camelCase entity}}', async () => {
+const { result } = renderHook(() => useCreate{{pascalCase entity}}Mutation(), { wrapper });
+
+await result.current[0]({
+{{#each formFields}}
+{{name}}: {{defaultValue}},
+{{/each}}
+});
+
+await waitFor(() => expect(result.current[1].isSuccess).toBe(true));
+});
+});
+});

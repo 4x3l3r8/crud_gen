@@ -1,0 +1,64 @@
+{{!-- Details Component Generator --}}
+import { Box, Heading, Text, Stack, Card, Spinner, Button, HStack } from '@chakra-ui/react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useGet{{pascalCase entity}}Query } from '../../store/{{camelCase entity}}/{{camelCase entity}}Api';
+
+export const {{pascalCase entity}}Details = () => {
+const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const { data, isLoading, error } = useGet{{pascalCase entity}}Query(id!);
+
+    if (isLoading) {
+    return (
+    <Box display="flex" justifyContent="center" alignItems="center" minH="200px">
+        <Spinner size="lg" />
+    </Box>
+    );
+    }
+
+    if (error || !data?.data) {
+    return (
+    <Box textAlign="center" py={10}>
+        <Text color="red.500">Failed to load {{camelCase entity}} details</Text>
+        <Button mt={4} onClick={()=> navigate('/{{route}}')}>
+            Back to List
+        </Button>
+    </Box>
+    );
+    }
+
+    const {{camelCase entity}} = data.data;
+
+    return (
+    <Stack gap={6}>
+        <HStack justify="space-between">
+            <Heading size="lg">{{entity}} Details</Heading>
+            <HStack gap={2}>
+                <Button variant="outline" onClick={()=> navigate('/{{route}}')}>
+                    Back
+                </Button>
+                <Button colorPalette="blue" onClick={()=> navigate(`/{{route}}/${id}/edit`)}>
+                    Edit
+                </Button>
+            </HStack>
+        </HStack>
+
+        <Card.Root>
+            <Card.Body>
+                <Stack gap={4}>
+                    {{#each fields}}
+                    {{#ifNeq name 'id'}}
+                    <Box>
+                        <Text fontWeight="semibold" color="gray.600">
+                            {{#if ui.table.header}}{{ui.table.header}}{{else}}{{name}}{{/if}}
+                        </Text>
+                        <Text>{ {{../camelCase ../entity}}.{{name}} }</Text>
+                    </Box>
+                    {{/ifNeq}}
+                    {{/each}}
+                </Stack>
+            </Card.Body>
+        </Card.Root>
+    </Stack>
+    );
+    };

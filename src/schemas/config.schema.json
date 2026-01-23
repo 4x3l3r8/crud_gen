@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProjectConfig",
+  "description": "Schema for crud-gen project configuration",
+  "type": "object",
+  "required": ["projectRoot", "paths", "defaults", "api", "components"],
+  "properties": {
+    "projectRoot": {
+      "type": "string",
+      "description": "Root directory of the target project"
+    },
+    "paths": {
+      "type": "object",
+      "required": ["pages", "components", "store", "hooks", "types", "tests"],
+      "properties": {
+        "pages": { "type": "string" },
+        "components": { "type": "string" },
+        "store": { "type": "string" },
+        "hooks": { "type": "string" },
+        "types": { "type": "string" },
+        "tests": { "type": "string" }
+      }
+    },
+    "templates": {
+      "type": "object",
+      "properties": {
+        "api": { "type": "string" },
+        "types": { "type": "string" },
+        "form": { "type": "string" },
+        "table": { "type": "string" },
+        "grid": { "type": "string" },
+        "details": { "type": "string" },
+        "pageList": { "type": "string" },
+        "pageCreate": { "type": "string" },
+        "pageEdit": { "type": "string" },
+        "pageDetails": { "type": "string" },
+        "hook": { "type": "string" },
+        "testApi": { "type": "string" },
+        "testComponent": { "type": "string" }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "required": ["listType", "detailsView", "tenantScoped", "generateTests"],
+      "properties": {
+        "listType": {
+          "type": "string",
+          "enum": ["table", "grid", "both"]
+        },
+        "detailsView": {
+          "type": "string",
+          "enum": ["page", "modal"]
+        },
+        "tenantScoped": { "type": "boolean" },
+        "generateTests": { "type": "boolean" }
+      }
+    },
+    "api": {
+      "type": "object",
+      "required": ["responseShape"],
+      "properties": {
+        "responseShape": {
+          "type": "object",
+          "required": ["dataField", "successField", "messageField", "metaField"],
+          "properties": {
+            "dataField": { "type": "string" },
+            "successField": { "type": "string" },
+            "messageField": { "type": "string" },
+            "metaField": { "type": "string" }
+          }
+        },
+        "errorShape": {
+          "type": "object",
+          "properties": {
+            "dataField": { "type": "string" },
+            "messageField": { "type": "string" }
+          }
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "required": ["tableComponent", "gridComponent", "formLayout"],
+      "properties": {
+        "tableComponent": { "type": "string" },
+        "gridComponent": { "type": "string" },
+        "formLayout": {
+          "type": "string",
+          "enum": ["vertical", "horizontal", "grid"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{{!-- TypeScript Interface Generator --}}
+export interface {{pascalCase entity}} {
+{{#each fields}}
+{{#ifNeq type 'computed'}}
+{{name}}: {{tsType type}};
+{{/ifNeq}}
+{{/each}}
+}
+
+export interface Create{{pascalCase entity}}Dto {
+{{#each fields}}
+{{#unlessOr (eq name 'id') (eq type 'computed')}}
+{{name}}{{#unless validation.required}}?{{/unless}}: {{tsType type}};
+{{/unlessOr}}
+{{/each}}
+}
+
+export interface Update{{pascalCase entity}}Dto {
+{{#each fields}}
+{{#unlessOr (eq name 'id') (eq type 'computed')}}
+{{name}}?: {{tsType type}};
+{{/unlessOr}}
+{{/each}}
+}
+
+export interface {{pascalCase entity}}ListParams {
+page?: number;
+limit?: number;
+sortBy?: string;
+sortOrder?: 'asc' | 'desc';
+search?: string;
+}

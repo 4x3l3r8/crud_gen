@@ -1,0 +1,40 @@
+{{!-- Create Page Generator --}}
+import { Heading, Stack, Card } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { {{pascalCase entity}}Form } from '../../components/{{camelCase entity}}/{{pascalCase entity}}Form';
+import { useCreate{{pascalCase entity}}Mutation } from '../../store/{{camelCase entity}}/{{camelCase entity}}Api';
+import { toaster } from '@/components/ui/toaster';
+import type { Create{{pascalCase entity}}Dto } from '../../types/{{camelCase entity}}';
+
+export default function Create{{pascalCase entity}}Page() {
+const navigate = useNavigate();
+const [create{{pascalCase entity}}, { isLoading }] = useCreate{{pascalCase entity}}Mutation();
+
+const handleSubmit = async (values: Create{{pascalCase entity}}Dto) => {
+try {
+await create{{pascalCase entity}}(values).unwrap();
+toaster.success({
+title: '{{entity}} created',
+description: 'The {{camelCase entity}} has been created successfully.',
+});
+navigate('/{{route}}');
+} catch (error) {
+toaster.error({
+title: 'Error',
+description: 'Failed to create {{camelCase entity}}. Please try again.',
+});
+}
+};
+
+return (
+<Stack gap={6}>
+    <Heading size="lg">Create {{entity}}</Heading>
+
+    <Card.Root>
+        <Card.Body>
+            <{{pascalCase entity}}Form onSubmit={handleSubmit} isSubmitting={isLoading} mode="create" />
+        </Card.Body>
+    </Card.Root>
+</Stack>
+);
+}

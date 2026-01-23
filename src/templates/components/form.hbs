@@ -1,0 +1,96 @@
+{{!-- Form Component Generator (Chakra UI v3 + Formik) --}}
+import { Button, Input, Textarea, Stack } from '@chakra-ui/react';
+import { Field } from '@chakra-ui/react';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import type { Create{{pascalCase entity}}Dto, Update{{pascalCase entity}}Dto } from '../../types/{{camelCase entity}}';
+{{#if hasRelations}}
+import { AsyncSelect } from '@/components/common/AsyncSelect';
+{{/if}}
+
+interface {{pascalCase entity}}FormProps {
+initialValues?: Partial<Create{{pascalCase entity}}Dto>;
+    onSubmit: (values: Create{{pascalCase entity}}Dto | Update{{pascalCase entity}}Dto) => void | Promise<void>;
+        isSubmitting?: boolean;
+        mode?: 'create' | 'edit';
+        }
+
+        const validationSchema = yup.object({
+        {{#each formFields}}
+        {{#if validation}}
+        {{name}}: {{{yupValidation}}},
+        {{/if}}
+        {{/each}}
+        });
+
+        const defaultInitialValues: Partial<Create{{pascalCase entity}}Dto> = {
+            {{#each formFields}}
+            {{name}}: {{defaultValue}},
+            {{/each}}
+            };
+
+            export const {{pascalCase entity}}Form = ({
+            initialValues = {},
+            onSubmit,
+            isSubmitting = false,
+            mode = 'create',
+            }: {{pascalCase entity}}FormProps) => {
+            const formik = useFormik({
+            initialValues: {
+            ...defaultInitialValues,
+            ...initialValues,
+            } as Create{{pascalCase entity}}Dto,
+            validationSchema,
+            onSubmit: async (values) => {
+            await onSubmit(values);
+            },
+            });
+
+            return (
+            <form onSubmit={formik.handleSubmit}>
+                <Stack gap={4}>
+                    {{#each formFields}}
+                    <Field.Root invalid={!!formik.errors.{{name}} && formik.touched.{{name}}}>
+                        <Field.Label>{{#if ui.form.label}}{{ui.form.label}}{{else}}{{name}}{{/if}}</Field.Label>
+                        {{#ifEq ui.form.component 'Select'}}
+                        <select name="{{name}}" value={formik.values.{{name}}} onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}>
+                            <option value="">Select {{#if ui.form.label}}{{ui.form.label}}{{else}}{{name}}{{/if}}
+                            </option>
+                            {{#each ui.form.options}}
+                            <option value="{{value}}">{{label}}</option>
+                            {{/each}}
+                        </select>
+                        {{else ifEq ui.form.component 'AsyncSelect'}}
+                        <AsyncSelect endpoint="{{ui.form.endpoint}}" value={formik.values.{{name}}} onChange={(value)=>
+                            formik.setFieldValue('{{name}}', value)}
+                            onBlur={() => formik.setFieldTouched('{{name}}')}
+                            />
+                            {{else ifEq ui.form.component 'Textarea'}}
+                            <Textarea name="{{name}}" placeholder="{{ui.form.placeholder}}"
+                                value={formik.values.{{name}}} onChange={formik.handleChange}
+                                onBlur={formik.handleBlur} />
+                            {{else ifEq ui.form.component 'Checkbox'}}
+                            <input type="checkbox" name="{{name}}" checked={formik.values.{{name}}}
+                                onChange={formik.handleChange} onBlur={formik.handleBlur} />
+                            {{else}}
+                            <Input name="{{name}}" type="{{#if ui.form.type}}{{ui.form.type}}{{else}}text{{/if}}"
+                                placeholder="{{ui.form.placeholder}}" value={formik.values.{{name}}}
+                                onChange={formik.handleChange} onBlur={formik.handleBlur} />
+                            {{/ifEq}}
+                            {{#if ui.form.helperText}}
+                            <Field.HelperText>{{ui.form.helperText}}</Field.HelperText>
+                            {{/if}}
+                            {formik.errors.{{name}} && formik.touched.{{name}} && (
+                            <Field.ErrorText>{formik.errors.{{name}}}</Field.ErrorText>
+                            )}
+                    </Field.Root>
+                    {{/each}}
+
+                    <Button type="submit" colorPalette="blue" loading={isSubmitting}>
+                        {mode === 'create' ? 'Create {{entity}}' : 'Update {{entity}}'}
+                    </Button>
+                </Stack>
+            </form>
+            );
+            };

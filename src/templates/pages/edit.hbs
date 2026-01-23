@@ -1,0 +1,65 @@
+{{!-- Edit Page Generator --}}
+import { Heading, Stack, Card, Spinner, Box, Text, Button } from '@chakra-ui/react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { {{pascalCase entity}}Form } from '../../../components/{{camelCase entity}}/{{pascalCase entity}}Form';
+import {
+useGet{{pascalCase entity}}Query,
+useUpdate{{pascalCase entity}}Mutation,
+} from '../../../store/{{camelCase entity}}/{{camelCase entity}}Api';
+import { toaster } from '@/components/ui/toaster';
+import type { Update{{pascalCase entity}}Dto } from '../../../types/{{camelCase entity}}';
+
+export default function Edit{{pascalCase entity}}Page() {
+const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const { data, isLoading: isLoadingData, error } = useGet{{pascalCase entity}}Query(id!);
+    const [update{{pascalCase entity}}, { isLoading: isUpdating }] = useUpdate{{pascalCase entity}}Mutation();
+
+    const handleSubmit = async (values: Update{{pascalCase entity}}Dto) => {
+    try {
+    await update{{pascalCase entity}}({ id: id!, data: values }).unwrap();
+    toaster.success({
+    title: '{{entity}} updated',
+    description: 'The {{camelCase entity}} has been updated successfully.',
+    });
+    navigate('/{{route}}');
+    } catch (error) {
+    toaster.error({
+    title: 'Error',
+    description: 'Failed to update {{camelCase entity}}. Please try again.',
+    });
+    }
+    };
+
+    if (isLoadingData) {
+    return (
+    <Box display="flex" justifyContent="center" alignItems="center" minH="200px">
+        <Spinner size="lg" />
+    </Box>
+    );
+    }
+
+    if (error || !data?.data) {
+    return (
+    <Box textAlign="center" py={10}>
+        <Text color="red.500">Failed to load {{camelCase entity}} data</Text>
+        <Button mt={4} onClick={()=> navigate('/{{route}}')}>
+            Back to List
+        </Button>
+    </Box>
+    );
+    }
+
+    return (
+    <Stack gap={6}>
+        <Heading size="lg">Edit {{entity}}</Heading>
+
+        <Card.Root>
+            <Card.Body>
+                <{{pascalCase entity}}Form initialValues={data.data} onSubmit={handleSubmit} isSubmitting={isUpdating}
+                    mode="edit" />
+            </Card.Body>
+        </Card.Root>
+    </Stack>
+    );
+    }

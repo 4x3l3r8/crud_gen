@@ -1,0 +1,21 @@
+{{!-- List Page Generator --}}
+import { Button, Heading, Stack, HStack } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { {{pascalCase entity}}Table } from '../../components/{{camelCase entity}}/{{pascalCase entity}}Table';
+
+export default function {{plural}}Page() {
+const navigate = useNavigate();
+
+return (
+<Stack gap={6}>
+    <HStack justify="space-between" align="center">
+        <Heading size="lg">{{plural}}</Heading>
+        <Button colorPalette="blue" onClick={()=> navigate('/{{route}}/create')}>
+            Create {{entity}}
+        </Button>
+    </HStack>
+
+    <{{pascalCase entity}}Table />
+</Stack>
+);
+}

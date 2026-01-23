@@ -1,0 +1,96 @@
+{{!-- Component Test Generator (Vitest + React Testing Library) --}}
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { {{pascalCase entity}}Form } from '../../../components/{{camelCase entity}}/{{pascalCase entity}}Form';
+
+describe('{{pascalCase entity}}Form', () => {
+const mockOnSubmit = vi.fn();
+
+beforeEach(() => {
+mockOnSubmit.mockClear();
+});
+
+it('should render all form fields', () => {
+render(
+<{{pascalCase entity}}Form onSubmit={mockOnSubmit} />);
+
+{{#each formFields}}
+expect(screen.getByLabelText(/{{#if ui.form.label}}{{ui.form.label}}{{else}}{{name}}{{/if}}/i)).toBeInTheDocument();
+{{/each}}
+});
+
+it('should show validation errors for required fields', async () => {
+const user = userEvent.setup();
+render(
+<{{pascalCase entity}}Form onSubmit={mockOnSubmit} />);
+
+const submitButton = screen.getByRole('button', { name: /create/i });
+await user.click(submitButton);
+
+await waitFor(() => {
+{{#each formFields}}
+{{#if validation.required}}
+expect(screen.getByText(/{{#if ui.form.label}}{{ui.form.label}}{{else}}{{name}}{{/if}} is
+required/i)).toBeInTheDocument();
+{{/if}}
+{{/each}}
+});
+
+expect(mockOnSubmit).not.toHaveBeenCalled();
+});
+
+it('should call onSubmit with form values when valid', async () => {
+const user = userEvent.setup();
+render(
+<{{pascalCase entity}}Form onSubmit={mockOnSubmit} />);
+
+{{#each formFields}}
+{{#ifEq ui.form.component 'Input'}}
+const {{name}}Input = screen.getByLabelText(/{{#if ui.form.label}}{{ui.form.label}}{{else}}{{name}}{{/if}}/i);
+await user.type({{name}}Input, 'test value');
+{{/ifEq}}
+{{/each}}
+
+const submitButton = screen.getByRole('button', { name: /create/i });
+await user.click(submitButton);
+
+await waitFor(() => {
+expect(mockOnSubmit).toHaveBeenCalled();
+});
+});
+
+it('should render in edit mode with correct button text', () => {
+render(
+<{{pascalCase entity}}Form onSubmit={mockOnSubmit} mode="edit" />);
+
+expect(screen.getByRole('button', { name: /update/i })).toBeInTheDocument();
+});
+
+it('should display loading state when submitting', () => {
+render(
+<{{pascalCase entity}}Form onSubmit={mockOnSubmit} isSubmitting={true} />);
+
+const submitButton = screen.getByRole('button', { name: /create/i });
+expect(submitButton).toHaveAttribute('data-loading', 'true');
+});
+
+it('should populate initial values in edit mode', () => {
+const initialValues = {
+{{#each formFields}}
+{{name}}: 'initial {{name}} value',
+{{/each}}
+};
+
+render(
+<{{pascalCase entity}}Form onSubmit={mockOnSubmit} initialValues={initialValues} mode="edit" />
+);
+
+{{#each formFields}}
+{{#ifEq ui.form.component 'Input'}}
+expect(screen.getByLabelText(/{{#if ui.form.label}}{{ui.form.label}}{{else}}{{name}}{{/if}}/i)).toHaveValue('initial
+{{name}} value');
+{{/ifEq}}
+{{/each}}
+});
+});

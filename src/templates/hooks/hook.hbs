@@ -1,0 +1,99 @@
+{{!-- Custom Hook Generator --}}
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+useGet{{plural}}Query,
+useGet{{pascalCase entity}}Query,
+useCreate{{pascalCase entity}}Mutation,
+useUpdate{{pascalCase entity}}Mutation,
+useDelete{{pascalCase entity}}Mutation,
+} from '../store/{{camelCase entity}}/{{camelCase entity}}Api';
+import type { Create{{pascalCase entity}}Dto, Update{{pascalCase entity}}Dto, {{pascalCase entity}}ListParams } from
+'../types/{{camelCase entity}}';
+
+export const use{{pascalCase entity}} = () => {
+const navigate = useNavigate();
+
+// Queries
+const useList = (params?: {{pascalCase entity}}ListParams) => {
+return useGet{{plural}}Query(params || { page: 1, limit: {{pagination.defaultPageSize}} });
+};
+
+const useDetails = (id: string) => {
+return useGet{{pascalCase entity}}Query(id, { skip: !id });
+};
+
+// Mutations
+const [createMutation, createState] = useCreate{{pascalCase entity}}Mutation();
+const [updateMutation, updateState] = useUpdate{{pascalCase entity}}Mutation();
+const [deleteMutation, deleteState] = useDelete{{pascalCase entity}}Mutation();
+
+// Actions
+const create = useCallback(
+async (data: Create{{pascalCase entity}}Dto) => {
+const result = await createMutation(data).unwrap();
+return result;
+},
+[createMutation]
+);
+
+const update = useCallback(
+async (id: string, data: Update{{pascalCase entity}}Dto) => {
+const result = await updateMutation({ id, data }).unwrap();
+return result;
+},
+[updateMutation]
+);
+
+const remove = useCallback(
+async (id: string) => {
+await deleteMutation(id).unwrap();
+},
+[deleteMutation]
+);
+
+// Navigation helpers
+const goToList = useCallback(() => {
+navigate('/{{route}}');
+}, [navigate]);
+
+const goToCreate = useCallback(() => {
+navigate('/{{route}}/create');
+}, [navigate]);
+
+const goToEdit = useCallback(
+(id: string) => {
+navigate(`/{{route}}/${id}/edit`);
+},
+[navigate]
+);
+
+const goToDetails = useCallback(
+(id: string) => {
+navigate(`/{{route}}/${id}`);
+},
+[navigate]
+);
+
+return {
+// Query hooks
+useList,
+useDetails,
+
+// Mutation actions
+create,
+update,
+remove,
+
+// Loading states
+isCreating: createState.isLoading,
+isUpdating: updateState.isLoading,
+isDeleting: deleteState.isLoading,
+
+// Navigation
+goToList,
+goToCreate,
+goToEdit,
+goToDetails,
+};
+};

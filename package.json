@@ -1,0 +1,50 @@
+{
+  "name": "crud-gen",
+  "version": "1.0.0",
+  "description": "CRUD generator for multi-tenant SaaS applications",
+  "type": "module",
+  "bin": {
+    "crud-gen": "./dist/cli/index.js"
+  },
+  "main": "./dist/cli/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli/index.ts",
+    "test": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "crud",
+    "generator",
+    "cli",
+    "react",
+    "chakra-ui",
+    "redux-toolkit",
+    "formik"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/inquirer": "^9.0.9",
+    "ajv": "^8.12.0",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.10",
+    "handlebars": "^4.7.8",
+    "inquirer": "^9.2.12",
+    "prettier": "^3.0.0",
+    "semver": "^7.5.4"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.0",
+    "@types/node": "^20.0.0",
+    "@types/semver": "^7.5.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
