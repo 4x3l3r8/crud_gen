@@ -7,9 +7,9 @@ useGet{{pascalCase entity}}Query,
 useCreate{{pascalCase entity}}Mutation,
 useUpdate{{pascalCase entity}}Mutation,
 useDelete{{pascalCase entity}}Mutation,
-} from '../store/{{camelCase entity}}/{{camelCase entity}}Api';
+} from '@/store/{{camelCase entity}}/{{camelCase entity}}Api';
 import type { Create{{pascalCase entity}}Dto, Update{{pascalCase entity}}Dto, {{pascalCase entity}}ListParams } from
-'../types/{{camelCase entity}}';
+'@/types/{{camelCase entity}}';
 
 export const use{{pascalCase entity}} = () => {
 const navigate = useNavigate();

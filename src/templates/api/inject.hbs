@@ -1,55 +1,57 @@
 {{!-- RTK Query API Generator --}}
-import { baseApi } from '../api/baseApi';
-import type { {{pascalCase entity}}, Create{{pascalCase entity}}Dto, Update{{pascalCase entity}}Dto } from '../../types/{{camelCase entity}}';
-import type { ApiResponse, ListParams } from '../../types/common';
+import { baseApi } from '@/store/api/baseApi';
+import type { {{pascalCase entity}}, Create{{pascalCase entity}}Dto, Update{{pascalCase entity}}Dto } from
+'@/types/{{camelCase entity}}';
+import type { ApiResponse, ListParams } from '@/types/common';
 
 export const {{camelCase entity}}Api = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
-    get{{plural}}: builder.query<ApiResponse<{{pascalCase entity}}[]>, ListParams>({
-      query: (params) => ({
-        url: '{{apiEndpoint}}',
-        params,
-      }),
-      providesTags: ['{{pascalCase entity}}'],
-    }),
+endpoints: (builder) => ({
+get{{plural}}: builder.query<ApiResponse<{{pascalCase entity}}[]>, ListParams>({
+  query: (params) => ({
+  url: '{{apiEndpoint}}',
+  params,
+  }),
+  providesTags: ['{{pascalCase entity}}'],
+  }),
 
-    get{{pascalCase entity}}: builder.query<ApiResponse<{{pascalCase entity}}>, string>({
-      query: (id) => `{{apiEndpoint}}/${id}`,
-      providesTags: (result, error, id) => [{ type: '{{pascalCase entity}}', id }],
+  get{{pascalCase entity}}: builder.query<ApiResponse<{{pascalCase entity}}>, string>({
+    query: (id) => `{{apiEndpoint}}/${id}`,
+    providesTags: (result, error, id) => [{ type: '{{pascalCase entity}}', id }],
     }),
 
     create{{pascalCase entity}}: builder.mutation<ApiResponse<{{pascalCase entity}}>, Create{{pascalCase entity}}Dto>({
       query: (body) => ({
-        url: '{{apiEndpoint}}',
-        method: 'POST',
-        body,
+      url: '{{apiEndpoint}}',
+      method: 'POST',
+      body,
       }),
       invalidatesTags: ['{{pascalCase entity}}'],
-    }),
+      }),
 
-    update{{pascalCase entity}}: builder.mutation<ApiResponse<{{pascalCase entity}}>, { id: string; data: Update{{pascalCase entity}}Dto }>({
-      query: ({ id, data }) => ({
+      update{{pascalCase entity}}: builder.mutation<ApiResponse<{{pascalCase entity}}>, { id: string; data:
+        Update{{pascalCase entity}}Dto }>({
+        query: ({ id, data }) => ({
         url: `{{apiEndpoint}}/${id}`,
         method: 'PUT',
         body: data,
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: '{{pascalCase entity}}', id }],
-    }),
+        }),
+        invalidatesTags: (result, error, { id }) => [{ type: '{{pascalCase entity}}', id }],
+        }),
 
-    delete{{pascalCase entity}}: builder.mutation<ApiResponse<void>, string>({
-      query: (id) => ({
-        url: `{{apiEndpoint}}/${id}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: ['{{pascalCase entity}}'],
-    }),
-  }),
-});
+        delete{{pascalCase entity}}: builder.mutation<ApiResponse<void>, string>({
+          query: (id) => ({
+          url: `{{apiEndpoint}}/${id}`,
+          method: 'DELETE',
+          }),
+          invalidatesTags: ['{{pascalCase entity}}'],
+          }),
+          }),
+          });
 
-export const {
-  useGet{{plural}}Query,
-  useGet{{pascalCase entity}}Query,
-  useCreate{{pascalCase entity}}Mutation,
-  useUpdate{{pascalCase entity}}Mutation,
-  useDelete{{pascalCase entity}}Mutation,
-} = {{camelCase entity}}Api;
+          export const {
+          useGet{{plural}}Query,
+          useGet{{pascalCase entity}}Query,
+          useCreate{{pascalCase entity}}Mutation,
+          useUpdate{{pascalCase entity}}Mutation,
+          useDelete{{pascalCase entity}}Mutation,
+          } = {{camelCase entity}}Api;

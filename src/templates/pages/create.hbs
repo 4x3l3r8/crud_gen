@@ -1,10 +1,10 @@
 {{!-- Create Page Generator --}}
 import { Heading, Stack, Card } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { {{pascalCase entity}}Form } from '../../components/{{camelCase entity}}/{{pascalCase entity}}Form';
-import { useCreate{{pascalCase entity}}Mutation } from '../../store/{{camelCase entity}}/{{camelCase entity}}Api';
+import { {{pascalCase entity}}Form } from '@/components/{{camelCase entity}}/{{pascalCase entity}}Form';
+import { useCreate{{pascalCase entity}}Mutation } from '@/store/{{camelCase entity}}/{{camelCase entity}}Api';
 import { toaster } from '@/components/ui/toaster';
-import type { Create{{pascalCase entity}}Dto } from '../../types/{{camelCase entity}}';
+import type { Create{{pascalCase entity}}Dto } from '@/types/{{camelCase entity}}';
 
 export default function Create{{pascalCase entity}}Page() {
 const navigate = useNavigate();

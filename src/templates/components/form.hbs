@@ -3,7 +3,7 @@ import { Button, Input, Textarea, Stack } from '@chakra-ui/react';
 import { Field } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import type { Create{{pascalCase entity}}Dto, Update{{pascalCase entity}}Dto } from '../../types/{{camelCase entity}}';
+import type { Create{{pascalCase entity}}Dto, Update{{pascalCase entity}}Dto } from '@/types/{{camelCase entity}}';
 {{#if hasRelations}}
 import { AsyncSelect } from '@/components/common/AsyncSelect';
 {{/if}}
@@ -50,10 +50,10 @@ initialValues?: Partial<Create{{pascalCase entity}}Dto>;
             <form onSubmit={formik.handleSubmit}>
                 <Stack gap={4}>
                     {{#each formFields}}
-                    <Field.Root invalid={!!formik.errors.{{name}} && formik.touched.{{name}}}>
+                    <Field.Root invalid={ !!formik.errors.{{name}} && formik.touched.{{name}} }>
                         <Field.Label>{{#if ui.form.label}}{{ui.form.label}}{{else}}{{name}}{{/if}}</Field.Label>
                         {{#ifEq ui.form.component 'Select'}}
-                        <select name="{{name}}" value={formik.values.{{name}}} onChange={formik.handleChange}
+                        <select name="{{name}}" value={formik.values.{{name}} } onChange={formik.handleChange}
                             onBlur={formik.handleBlur}>
                             <option value="">Select {{#if ui.form.label}}{{ui.form.label}}{{else}}{{name}}{{/if}}
                             </option>
@@ -62,27 +62,27 @@ initialValues?: Partial<Create{{pascalCase entity}}Dto>;
                             {{/each}}
                         </select>
                         {{else ifEq ui.form.component 'AsyncSelect'}}
-                        <AsyncSelect endpoint="{{ui.form.endpoint}}" value={formik.values.{{name}}} onChange={(value)=>
+                        <AsyncSelect endpoint="{{ui.form.endpoint}}" value={formik.values.{{name}} } onChange={(value)=>
                             formik.setFieldValue('{{name}}', value)}
                             onBlur={() => formik.setFieldTouched('{{name}}')}
                             />
                             {{else ifEq ui.form.component 'Textarea'}}
                             <Textarea name="{{name}}" placeholder="{{ui.form.placeholder}}"
-                                value={formik.values.{{name}}} onChange={formik.handleChange}
+                                value={formik.values.{{name}} } onChange={formik.handleChange}
                                 onBlur={formik.handleBlur} />
                             {{else ifEq ui.form.component 'Checkbox'}}
-                            <input type="checkbox" name="{{name}}" checked={formik.values.{{name}}}
+                            <input type="checkbox" name="{{name}}" checked={formik.values.{{name}} }
                                 onChange={formik.handleChange} onBlur={formik.handleBlur} />
                             {{else}}
                             <Input name="{{name}}" type="{{#if ui.form.type}}{{ui.form.type}}{{else}}text{{/if}}"
-                                placeholder="{{ui.form.placeholder}}" value={formik.values.{{name}}}
+                                placeholder="{{ui.form.placeholder}}" value={formik.values.{{name}} }
                                 onChange={formik.handleChange} onBlur={formik.handleBlur} />
                             {{/ifEq}}
                             {{#if ui.form.helperText}}
                             <Field.HelperText>{{ui.form.helperText}}</Field.HelperText>
                             {{/if}}
                             {formik.errors.{{name}} && formik.touched.{{name}} && (
-                            <Field.ErrorText>{formik.errors.{{name}}}</Field.ErrorText>
+                            <Field.ErrorText>{formik.errors.{{name}} }</Field.ErrorText>
                             )}
                     </Field.Root>
                     {{/each}}

@@ -1,7 +1,7 @@
 {{!-- Details Component Generator --}}
 import { Box, Heading, Text, Stack, Card, Spinner, Button, HStack } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGet{{pascalCase entity}}Query } from '../../store/{{camelCase entity}}/{{camelCase entity}}Api';
+import { useGet{{pascalCase entity}}Query } from '@/store/{{camelCase entity}}/{{camelCase entity}}Api';
 
 export const {{pascalCase entity}}Details = () => {
 const { id } = useParams<{ id: string }>();
@@ -52,7 +52,7 @@ const { id } = useParams<{ id: string }>();
                         <Text fontWeight="semibold" color="gray.600">
                             {{#if ui.table.header}}{{ui.table.header}}{{else}}{{name}}{{/if}}
                         </Text>
-                        <Text>{ {{../camelCase ../entity}}.{{name}} }</Text>
+                        <Text>{ {{camelCase entity}}.{{name}} }</Text>
                     </Box>
                     {{/ifNeq}}
                     {{/each}}

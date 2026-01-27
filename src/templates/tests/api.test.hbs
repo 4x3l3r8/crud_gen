@@ -5,15 +5,15 @@ import { http, HttpResponse } from 'msw';
 import { renderHook, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { baseApi } from '../../../store/api/baseApi';
+import { baseApi } from '@/store/api/baseApi';
 import {
 useGet{{plural}}Query,
 useGet{{pascalCase entity}}Query,
 useCreate{{pascalCase entity}}Mutation,
 useUpdate{{pascalCase entity}}Mutation,
 useDelete{{pascalCase entity}}Mutation,
-} from '../../../store/{{camelCase entity}}/{{camelCase entity}}Api';
-import type { {{pascalCase entity}} } from '../../../types/{{camelCase entity}}';
+} from '@/store/{{camelCase entity}}/{{camelCase entity}}Api';
+import type { {{pascalCase entity}} } from '@/types/{{camelCase entity}}';
 
 const mock{{pascalCase entity}}: {{pascalCase entity}} = {
 id: '1',

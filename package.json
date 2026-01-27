@@ -8,7 +8,7 @@
   },
   "main": "./dist/cli/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsx src/scripts/copy-assets.ts",
     "dev": "tsx src/cli/index.ts",
     "test": "vitest",
     "prepublishOnly": "npm run build"

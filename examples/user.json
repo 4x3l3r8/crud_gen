@@ -1,0 +1,170 @@
+{
+  "entity": "User",
+  "plural": "Users",
+  "route": "users",
+  "apiEndpoint": "/api/v1/users",
+  "tenantScoped": true,
+  "pagination": {
+    "defaultPageSize": 20,
+    "pageSizeOptions": [10, 20, 50, 100]
+  },
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "ui": {
+        "form": { "exclude": true },
+        "table": { "exclude": true }
+      }
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "validation": {
+        "required": true,
+        "type": "email"
+      },
+      "ui": {
+        "form": {
+          "component": "Input",
+          "type": "email",
+          "placeholder": "Enter email address",
+          "label": "Email Address"
+        },
+        "table": {
+          "visible": true,
+          "sortable": true,
+          "filterable": true,
+          "header": "Email"
+        }
+      }
+    },
+    {
+      "name": "firstName",
+      "type": "string",
+      "validation": {
+        "required": true,
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "ui": {
+        "form": {
+          "component": "Input",
+          "placeholder": "Enter first name",
+          "label": "First Name"
+        },
+        "table": {
+          "visible": true,
+          "sortable": true,
+          "header": "First Name"
+        }
+      }
+    },
+    {
+      "name": "lastName",
+      "type": "string",
+      "validation": {
+        "required": true,
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "ui": {
+        "form": {
+          "component": "Input",
+          "placeholder": "Enter last name",
+          "label": "Last Name"
+        },
+        "table": {
+          "visible": true,
+          "sortable": true,
+          "header": "Last Name"
+        }
+      }
+    },
+    {
+      "name": "role",
+      "type": "string",
+      "validation": {
+        "required": true
+      },
+      "ui": {
+        "form": {
+          "component": "Select",
+          "label": "Role",
+          "options": [
+            { "label": "Admin", "value": "admin" },
+            { "label": "Manager", "value": "manager" },
+            { "label": "User", "value": "user" }
+          ]
+        },
+        "table": {
+          "visible": true,
+          "header": "Role"
+        }
+      }
+    },
+    {
+      "name": "isActive",
+      "type": "boolean",
+      "ui": {
+        "form": {
+          "component": "Checkbox",
+          "label": "Active"
+        },
+        "table": {
+          "visible": true,
+          "header": "Status"
+        }
+      }
+    },
+    {
+      "name": "bio",
+      "type": "string",
+      "ui": {
+        "form": {
+          "component": "Textarea",
+          "placeholder": "Enter bio (optional)",
+          "label": "Bio",
+          "helperText": "A brief description about the user"
+        },
+        "table": {
+          "visible": false
+        }
+      }
+    },
+    {
+      "name": "departmentId",
+      "type": "relation",
+      "relation": {
+        "entity": "Department",
+        "labelField": "name",
+        "valueField": "id"
+      },
+      "ui": {
+        "form": {
+          "component": "AsyncSelect",
+          "label": "Department",
+          "endpoint": "/api/v1/departments"
+        },
+        "table": {
+          "visible": true,
+          "header": "Department"
+        }
+      }
+    },
+    {
+      "name": "createdAt",
+      "type": "date",
+      "ui": {
+        "form": {
+          "exclude": true
+        },
+        "table": {
+          "visible": true,
+          "sortable": true,
+          "header": "Created"
+        }
+      }
+    }
+  ]
+}

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const ajv = new Ajv({ allErrors: true, verbose: true });
+const ajv = new Ajv.default({ allErrors: true, verbose: true });
 
 /**
  * Validate an entity configuration against the JSON schema
@@ -49,16 +49,20 @@ export async function validateConfig(config: unknown): Promise<void> {
 /**
  * Validate entity configuration with detailed error messages
  */
-export function validateEntitySync(entity: unknown, schema: object): { valid: boolean; errors: string[] } {
+export function validateEntitySync(
+    entity: unknown,
+    schema: object
+): { valid: boolean; errors: string[] } {
     const validate = ajv.compile(schema);
     const valid = validate(entity);
 
     if (!valid) {
-        const errors = validate.errors?.map((err) => {
-            const path = err.instancePath || 'root';
-            const message = err.message || 'Unknown error';
-            return `${path}: ${message}`;
-        }) || [];
+        const errors =
+            validate.errors?.map((err) => {
+                const path = err.instancePath || 'root';
+                const message = err.message || 'Unknown error';
+                return `${path}: ${message}`;
+            }) || [];
         return { valid: false, errors };
     }
 

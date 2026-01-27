@@ -1,0 +1,130 @@
+{
+  "entity": "Product",
+  "plural": "Products",
+  "route": "products",
+  "apiEndpoint": "/api/v1/products",
+  "tenantScoped": true,
+  "pagination": {
+    "defaultPageSize": 20,
+    "pageSizeOptions": [10, 20, 50, 100]
+  },
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "ui": {
+        "form": { "exclude": true },
+        "table": { "exclude": true }
+      }
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "validation": {
+        "required": true,
+        "minLength": 3,
+        "maxLength": 100
+      },
+      "ui": {
+        "form": {
+          "component": "Input",
+          "placeholder": "Enter product name",
+          "label": "Product Name"
+        },
+        "table": {
+          "visible": true,
+          "sortable": true,
+          "header": "Name"
+        }
+      }
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "ui": {
+        "form": {
+          "component": "Textarea",
+          "placeholder": "Enter product description",
+          "label": "Description"
+        },
+        "table": {
+          "visible": false
+        }
+      }
+    },
+    {
+      "name": "price",
+      "type": "number",
+      "validation": {
+        "required": true,
+        "min": 0
+      },
+      "ui": {
+        "form": {
+          "component": "Input",
+          "type": "number",
+          "placeholder": "0.00",
+          "label": "Price"
+        },
+        "table": {
+          "visible": true,
+          "sortable": true,
+          "header": "Price"
+        }
+      }
+    },
+    {
+      "name": "quantity",
+      "type": "number",
+      "validation": {
+        "required": true,
+        "min": 0
+      },
+      "ui": {
+        "form": {
+          "component": "Input",
+          "type": "number",
+          "label": "Quantity in Stock"
+        },
+        "table": {
+          "visible": true,
+          "header": "Stock"
+        }
+      }
+    },
+    {
+      "name": "categoryId",
+      "type": "relation",
+      "relation": {
+        "entity": "Category",
+        "labelField": "name",
+        "valueField": "id"
+      },
+      "ui": {
+        "form": {
+          "component": "AsyncSelect",
+          "label": "Category",
+          "endpoint": "/api/v1/categories"
+        },
+        "table": {
+          "visible": true,
+          "header": "Category"
+        }
+      }
+    },
+    {
+      "name": "isPublished",
+      "type": "boolean",
+      "ui": {
+        "form": {
+          "component": "Checkbox",
+          "label": "Published"
+        },
+        "table": {
+          "visible": true,
+          "header": "Status"
+        }
+      }
+    }
+  ]
+}

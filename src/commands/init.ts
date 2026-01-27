@@ -3,8 +3,12 @@
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
+import { fileURLToPath } from 'url';
 import { DEFAULT_CONFIG } from '../types/config.js';
 import { checkDependencies, printDependencyResults } from '../utils/dependency-check.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface InitOptions {
     force?: boolean;
@@ -47,6 +51,22 @@ export async function initCommand(options: InitOptions): Promise<void> {
         const manifestPath = path.join(crudGenDir, 'manifest.json');
         await fs.writeJson(manifestPath, {}, { spaces: 2 });
         console.log(chalk.green(`✓ Created ${path.relative(projectRoot, manifestPath)}`));
+
+        // Copy schemas
+        const schemasDir = path.join(crudGenDir, 'schemas');
+        await fs.ensureDir(schemasDir);
+
+        // Source schemas from built dist location
+        // __dirname is dist/commands, so copy from dist/schemas
+        const srcSchemas = path.join(__dirname, '../schemas');
+
+        if (await fs.pathExists(srcSchemas)) {
+            await fs.copy(srcSchemas, schemasDir);
+            console.log(chalk.green(`✓ Copied schemas to ${path.relative(projectRoot, schemasDir)}/`));
+        } else {
+            console.warn(chalk.yellow(`⚠️  Could not find schemas to copy at ${srcSchemas}`));
+        }
+
 
         // Check dependencies
         console.log(chalk.blue('\n📦 Checking dependencies...\n'));
