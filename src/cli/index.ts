@@ -50,5 +50,6 @@ program
     .option('--yes', 'Skip confirmation prompt', false)
     .action(cleanCommand);
 
+
 program.parse();
 

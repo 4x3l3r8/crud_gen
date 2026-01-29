@@ -1,0 +1,59 @@
+{{!-- Delete Modal Component Generator --}}
+import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react"
+import { type Dispatch, type FC, type SetStateAction } from "react";
+import { Text, DialogOpenChangeDetails } from "@chakra-ui/react"
+import { use{{pascalCase entity}} } from "@/hooks/use{{entity}}"
+import { toaster } from "@/components/ui/toaster"
+
+interface ModalComponentProps {
+open: boolean;
+setOpen: Dispatch<SetStateAction<boolean>>,
+    id: string;
+    }
+
+    export const Delete{{pascalCase entity}}Modal:FC<ModalComponentProps> = ({ open, setOpen, id }) => {
+        const {remove, isDeleting} = use{{pascalCase entity}}()
+
+        const handleDelete = async () => {
+        remove(id).then(() => {
+        toaster.success({
+        title: "Operation Successful",
+        description: "{{entity}} was deleted successfully"
+        })
+        }).catch(() => {
+        toaster.error({
+        title: "Operation Failed",
+        description: "Failed to delete {{entity}}"
+        })
+        })
+        }
+
+        const openChange = (e: DialogOpenChangeDetails) => setOpen(e.open)
+
+        return (
+        <Dialog.Root placement="center" lazyMount role="alertdialog" open={open} onOpenChange={openChange}>
+            <Portal>
+                <Dialog.Backdrop />
+                <Dialog.Positioner>
+                    <Dialog.Content>
+                        <Dialog.Header>
+                            <Dialog.Title>Delete {{entity}}</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            <Text>Are you sure you want to delete this {{entity}}?</Text>
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                            <Dialog.ActionTrigger asChild>
+                                <Button variant="outline">Cancel</Button>
+                            </Dialog.ActionTrigger>
+                            <Button colorPalette="red" onClick={handleDelete} isLoading={isDeleting}>Delete</Button>
+                        </Dialog.Footer>
+                        <Dialog.CloseTrigger asChild>
+                            <CloseButton size="sm" />
+                        </Dialog.CloseTrigger>
+                    </Dialog.Content>
+                </Dialog.Positioner>
+            </Portal>
+        </Dialog.Root>
+        )
+        }

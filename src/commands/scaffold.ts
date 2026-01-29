@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import type { FieldConfig } from '../types/entity.js';
+import type { FieldConfig, ViewsConfig } from '../types/entity.js';
 
 interface ScaffoldOptions {
     output?: string;
@@ -20,6 +20,14 @@ interface FieldAnswers {
     placeholder?: string;
     showInTable: boolean;
     sortable: boolean;
+}
+
+interface ViewsAnswers {
+    list: 'table' | 'grid' | 'both';
+    details: 'modal' | 'page';
+    createEdit: 'modal' | 'page';
+    singleViewType: 'drawer' | 'dialog';
+    detailsEnabled: boolean;
 }
 
 export async function scaffoldCommand(entityName: string, options: ScaffoldOptions): Promise<void> {
@@ -86,6 +94,9 @@ export async function scaffoldCommand(entityName: string, options: ScaffoldOptio
             addMoreFields = continueAdding;
         }
 
+        const viewsConfig = await promptForViewsConfig();
+        const builtViewsConfig = buildViewsConfig(viewsConfig);
+
         // Determine output path
         const outputDir = options.output || 'schemas';
         const outputPath = path.join(process.cwd(), outputDir, `${entityName.toLowerCase()}.json`);
@@ -112,6 +123,7 @@ export async function scaffoldCommand(entityName: string, options: ScaffoldOptio
                 pageSizeOptions: [10, 20, 50, 100],
             },
             fields,
+            views: builtViewsConfig,
         };
 
         // Ensure directory exists
@@ -268,4 +280,86 @@ function buildFieldConfig(answers: FieldAnswers): FieldConfig {
     }
 
     return field;
+}
+
+function promptForViewsConfig(): Promise<ViewsAnswers> {
+    return inquirer.prompt<ViewsAnswers>([
+        {
+            type: 'list',
+            name: 'list',
+            message: 'List view type:',
+            choices: [
+                { name: 'Table', value: 'table' },
+                { name: 'Grid', value: 'grid' },
+                { name: 'Both', value: 'both' },
+            ],
+        },
+        {
+            type: 'confirm',
+            name: 'detailsEnabled',
+            message: 'Enable details view?',
+            default: true,
+        },
+        {
+            type: 'list',
+            name: 'details',
+            message: 'Details view type:',
+            choices: [
+                { name: 'Modal', value: 'modal' },
+                { name: 'Page', value: 'page' },
+            ],
+            when: (answers) => answers.detailsEnabled,
+        },
+        {
+            type: 'list',
+            name: 'createEdit',
+            message: 'Create/Edit view type:',
+            choices: [
+                { name: 'Modal', value: 'modal' },
+                { name: 'Page', value: 'page' },
+            ],
+        },
+        {
+            type: 'list',
+            name: 'singleViewType',
+            message: 'What type of modal should be used for single view (i.e. create/edit, view)?',
+            choices: [
+                { name: 'Drawer', value: 'drawer' },
+                { name: 'Dialog', value: 'dialog' },
+            ],
+            when: (answers) => answers.details === 'modal' || answers.createEdit === 'modal',
+        },
+    ]);
+}
+
+function buildViewsConfig(answers: ViewsAnswers): ViewsConfig {
+    const views: ViewsConfig = {};
+    if (answers.list) {
+        views.list = {
+            type: answers.list,
+            defaultView: answers.list as "table" | "grid",
+        };
+    }
+    if (answers.detailsEnabled) {
+        views.details = {
+            type: answers.details,
+        };
+    } else {
+        views.details = false;
+    }
+    if (answers.createEdit) {
+        views['create/edit'] = {
+            type: answers.createEdit,
+        };
+    }
+    if (answers.createEdit === 'modal') {
+        views['create/edit']!.modalType = answers.singleViewType;
+    }
+    if (answers.details === "modal") {
+        views.details = {
+            type: "modal",
+            modalType: answers.singleViewType
+        }
+    }
+    return views;
 }

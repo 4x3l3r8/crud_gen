@@ -1,0 +1,61 @@
+{{!-- View Modal Component --}}
+import { Dialog, Portal } from "@chakra-ui/react"
+import { type Dispatch, type FC, type SetStateAction } from "react";
+import { Button, CloseButton } from "@chakra-ui/react"
+import { DialogOpenChangeDetails } from "@chakra-ui/react"
+import { use{{pascalCase entity}} } from "@/hooks/use{{pascalCase entity}}"
+
+interface ModalComponentProps {
+open: boolean;
+setOpen: Dispatch<SetStateAction<boolean>>
+    id: string;
+    }
+
+    export const {{pascalCase entity}}ViewModal:FC<ModalComponentProps> = ({ open, setOpen, id }) => {
+        const { useDetails } = use{{pascalCase entity}}();
+
+        const { data, isLoading } = useDetails(id as string);
+
+        const openChange = (e: DialogOpenChangeDetails) => setOpen(e.open)
+
+        if (isLoading) {
+        return
+        <Loader />
+        }
+
+        return (
+        <Dialog.Root placement="center" lazyMount open={open} onOpenChange={openChange}>
+            <Portal>
+                <Dialog.Backdrop />
+                <Dialog.Positioner>
+                    <Dialog.Content>
+                        <Dialog.Header>
+                            <Dialog.Title>View {{entity}}</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            {{#each fields}}
+                            {{#ifNeq name 'id'}}
+                            <Box>
+                                <Text fontWeight="semibold" color="gray.600">
+                                    {{#if ui.table.header}}{{ui.table.header}}{{else}}{{name}}{{/if}}
+                                </Text>
+                                <Text>{ {{camelCase entity}}.{{name}} }</Text>
+                            </Box>
+                            {{/ifNeq}}
+                            {{/each}}
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                            <Dialog.ActionTrigger asChild>
+                                <Button variant="outline">Cancel</Button>
+                            </Dialog.ActionTrigger>
+                            <Button>Save</Button>
+                        </Dialog.Footer>
+                        <Dialog.CloseTrigger asChild>
+                            <CloseButton size="sm" />
+                        </Dialog.CloseTrigger>
+                    </Dialog.Content>
+                </Dialog.Positioner>
+            </Portal>
+        </Dialog.Root>
+        );
+        };

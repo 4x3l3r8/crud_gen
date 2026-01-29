@@ -1,6 +1,7 @@
 // Project configuration structure
 
 export interface ProjectConfig {
+    "$schema": string;
     projectRoot: string;
     paths: PathsConfig;
     templates?: TemplatesConfig;
@@ -48,13 +49,13 @@ export interface ApiConfig {
 
 export interface ResponseShapeConfig {
     dataField: string;
-    successField: string;
+    statusField: string;
     messageField: string;
     metaField: string;
 }
 
 export interface ErrorShapeConfig {
-    dataField: string;
+    statusField: string;
     messageField: string;
 }
 
@@ -66,6 +67,7 @@ export interface ComponentsConfig {
 
 // Default configuration values
 export const DEFAULT_CONFIG: ProjectConfig = {
+    "$schema": "./.crud-gen/schemas/config.schema.json",
     projectRoot: '.',
     paths: {
         pages: 'src/pages',
@@ -84,12 +86,12 @@ export const DEFAULT_CONFIG: ProjectConfig = {
     api: {
         responseShape: {
             dataField: 'data',
-            successField: 'success',
+            statusField: 'status',
             messageField: 'message',
             metaField: 'meta',
         },
         errorShape: {
-            dataField: 'error',
+            statusField: 'status',
             messageField: 'message',
         },
     },

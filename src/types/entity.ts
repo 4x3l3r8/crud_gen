@@ -18,7 +18,8 @@ export interface PaginationConfig {
 
 export interface ViewsConfig {
     list?: ListViewConfig;
-    details?: DetailsViewConfig;
+    details?: DetailsViewConfig | boolean;
+    "create/edit"?: DetailsViewConfig;
 }
 
 export interface ListViewConfig {

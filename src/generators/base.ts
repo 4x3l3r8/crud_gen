@@ -3,7 +3,7 @@
 import prettier from 'prettier';
 import { FileManager } from '../utils/file-system.js';
 import { TemplateEngine } from '../utils/template-engine.js';
-import type { EntityConfig } from '../types/entity.js';
+import type { EntityConfig, ViewsConfig } from '../types/entity.js';
 import type { ProjectConfig } from '../types/config.js';
 import type { GenerateOptions, FieldTemplateData, TemplateData } from '../types/generator.js';
 import {
@@ -87,6 +87,21 @@ export abstract class BaseGenerator {
         const computedFields = fields.filter((f) => f.type === 'computed');
         const hasRelations = entity.fields.some((f) => isRelationField(f));
 
+        const views = (entity.views as ViewsConfig) ?? {
+            list: {
+                type: 'table',
+                defaultView: 'table',
+            },
+            details: {
+                type: 'modal',
+                modalType: 'dialog',
+            },
+            'create/edit': {
+                type: 'modal',
+                modalType: 'dialog',
+            },
+        };
+
         return {
             entity: entity.entity,
             plural: entity.plural,
@@ -102,6 +117,10 @@ export abstract class BaseGenerator {
             tableFields,
             hasRelations,
             computedFields,
+            views,
+            mutationUIisModal: views['create/edit'] ? views['create/edit'].type === 'modal' : false,
+            mutationUIisDrawer: views['create/edit'] ? views['create/edit'].modalType === 'drawer' : false,
+            mutationUIisPage: views['create/edit'] ? views['create/edit'].type === 'page' : false,
         };
     }
 }

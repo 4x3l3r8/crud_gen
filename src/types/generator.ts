@@ -1,5 +1,7 @@
 // Generator interfaces
 
+import { ViewsConfig } from "./entity.js";
+
 export interface GenerateOptions {
     force?: boolean;
     only?: GenerationPart[];
@@ -48,6 +50,10 @@ export interface TemplateData {
     tableFields: FieldTemplateData[];
     hasRelations: boolean;
     computedFields: FieldTemplateData[];
+    views: ViewsConfig;
+    mutationUIisModal: boolean;
+    mutationUIisDrawer: boolean;
+    mutationUIisPage: boolean;
 }
 
 export interface FieldTemplateData {

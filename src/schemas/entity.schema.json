@@ -3,7 +3,13 @@
   "title": "EntityConfig",
   "description": "Schema for entity configuration used by crud-gen",
   "type": "object",
-  "required": ["entity", "plural", "route", "apiEndpoint", "fields"],
+  "required": [
+    "entity",
+    "plural",
+    "route",
+    "apiEndpoint",
+    "fields"
+  ],
   "properties": {
     "entity": {
       "type": "string",
@@ -35,41 +41,129 @@
         },
         "pageSizeOptions": {
           "type": "array",
-          "items": { "type": "number" },
-          "default": [10, 20, 50, 100]
+          "items": {
+            "type": "number"
+          },
+          "default": [
+            10,
+            20,
+            50,
+            100
+          ]
         }
-      }
+      },
+      "description": "Pagination settings for the entity list views"
     },
     "views": {
       "type": "object",
+      "description": "Views configuration for the entity",
       "properties": {
         "list": {
           "type": "object",
+          "description": "List view configuration for the entity",
           "properties": {
-            "type": { "type": "string", "enum": ["table", "grid", "both"] },
-            "defaultView": { "type": "string", "enum": ["table", "grid"] },
-            "gridComponent": { "type": "string" }
+            "type": {
+              "type": "string",
+              "enum": [
+                "table",
+                "grid",
+                "both"
+              ]
+            },
+            "defaultView": {
+              "type": "string",
+              "enum": [
+                "table",
+                "grid"
+              ]
+            },
+            "gridComponent": {
+              "type": "string"
+            }
           }
         },
         "details": {
-          "type": "object",
+          "type": [
+            "object",
+            "boolean"
+          ],
+          "description": "Single entity view configuration for the entity",
           "properties": {
-            "type": { "type": "string", "enum": ["page", "modal"] },
-            "modalType": { "type": "string", "enum": ["drawer", "dialog"] }
+            "type": {
+              "type": "string",
+              "enum": [
+                "page",
+                "modal"
+              ]
+            }
+          },
+          "if": {
+            "properties": {
+              "type": {
+                "const": "modal"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "modalType": {
+                "type": "string",
+                "enum": [
+                  "drawer",
+                  "dialog"
+                ]
+              }
+            }
+          }
+        },
+        "create/edit": {
+          "type": "object",
+          "description": "Create/edit entity view configuration for the entity",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "modal"
+              ]
+            }
+          },
+          "if": {
+            "properties": {
+              "type": {
+                "const": "modal"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "modalType": {
+                "type": "string",
+                "enum": [
+                  "drawer",
+                  "dialog"
+                ]
+              }
+            }
           }
         }
       }
     },
     "fields": {
       "type": "array",
-      "items": { "$ref": "#/definitions/field" },
-      "minItems": 1
+      "items": {
+        "$ref": "#/definitions/field"
+      },
+      "minItems": 1,
+      "description": "Define fields for the entity"
     }
   },
   "definitions": {
     "field": {
       "type": "object",
-      "required": ["name", "type"],
+      "required": [
+        "name",
+        "type"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -77,29 +171,65 @@
         },
         "type": {
           "type": "string",
-          "enum": ["string", "number", "boolean", "date", "computed", "relation"],
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "date",
+            "computed",
+            "relation"
+          ],
           "description": "Field data type"
         },
         "validation": {
           "type": "object",
           "properties": {
-            "required": { "type": "boolean" },
-            "type": { "type": "string", "enum": ["email", "url", "uuid"] },
-            "min": { "type": "number" },
-            "max": { "type": "number" },
-            "minLength": { "type": "number" },
-            "maxLength": { "type": "number" },
-            "pattern": { "type": "string" }
+            "required": {
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "email",
+                "url",
+                "uuid"
+              ]
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "minLength": {
+              "type": "number"
+            },
+            "maxLength": {
+              "type": "number"
+            },
+            "pattern": {
+              "type": "string"
+            }
           }
         },
         "relation": {
           "type": "object",
           "properties": {
-            "entity": { "type": "string" },
-            "labelField": { "type": "string" },
-            "valueField": { "type": "string" }
+            "entity": {
+              "type": "string"
+            },
+            "labelField": {
+              "type": "string"
+            },
+            "valueField": {
+              "type": "string"
+            }
           },
-          "required": ["entity", "labelField", "valueField"]
+          "required": [
+            "entity",
+            "labelField",
+            "valueField"
+          ]
         },
         "computation": {
           "type": "string",
@@ -111,37 +241,74 @@
             "form": {
               "type": "object",
               "properties": {
-                "exclude": { "type": "boolean" },
+                "exclude": {
+                  "type": "boolean"
+                },
                 "component": {
                   "type": "string",
-                  "enum": ["Input", "Select", "AsyncSelect", "Checkbox", "Textarea", "DatePicker", "Hidden"]
+                  "enum": [
+                    "Input",
+                    "Select",
+                    "AsyncSelect",
+                    "Checkbox",
+                    "Textarea",
+                    "DatePicker",
+                    "Hidden"
+                  ]
                 },
-                "type": { "type": "string" },
-                "placeholder": { "type": "string" },
-                "label": { "type": "string" },
-                "helperText": { "type": "string" },
+                "type": {
+                  "type": "string"
+                },
+                "placeholder": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "helperText": {
+                  "type": "string"
+                },
                 "options": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "label": { "type": "string" },
-                      "value": { "type": "string" }
+                      "label": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
                     },
-                    "required": ["label", "value"]
+                    "required": [
+                      "label",
+                      "value"
+                    ]
                   }
                 },
-                "endpoint": { "type": "string" }
+                "endpoint": {
+                  "type": "string"
+                }
               }
             },
             "table": {
               "type": "object",
               "properties": {
-                "exclude": { "type": "boolean" },
-                "visible": { "type": "boolean" },
-                "sortable": { "type": "boolean" },
-                "filterable": { "type": "boolean" },
-                "header": { "type": "string" }
+                "exclude": {
+                  "type": "boolean"
+                },
+                "visible": {
+                  "type": "boolean"
+                },
+                "sortable": {
+                  "type": "boolean"
+                },
+                "filterable": {
+                  "type": "boolean"
+                },
+                "header": {
+                  "type": "string"
+                }
               }
             }
           }

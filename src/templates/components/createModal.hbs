@@ -1,0 +1,60 @@
+{{!-- Create Modal Component Generator --}}
+import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react"
+import { type Dispatch, type FC, type SetStateAction } from "react";
+import { {{pascalCase entity}}Form } from '@/components/{{camelCase entity}}/{{pascalCase entity}}Form';
+import { use{{pascalCase entity}} } from "@/hooks/use{{entity}}"
+import { toaster } from "@/components/ui/toaster"
+import { type DialogOpenChangeDetails } from "@chakra-ui/react"
+
+interface ModalComponentProps {
+open: boolean;
+setOpen: Dispatch<SetStateAction<boolean>>
+    }
+
+    export const Create{{pascalCase entity}}Modal:FC<ModalComponentProps> = ({ open, setOpen }) => {
+        const {create, isCreating} = use{{pascalCase entity}}()
+
+        const handleSubmit = async (values: Create{{pascalCase entity}}Dto) => {
+        create(values).then(() => {
+        toaster.success({
+        title: "Operation Successful",
+        description: "{{uppercase entity}} was created successfully"
+        })
+        }).catch(() => {
+        toaster.error({
+        title: "Operation Failed",
+        description: "Failed to create {{entity}}"
+        })
+        })
+        }
+
+        const openChange = (e: DialogOpenChangeDetails) => setOpen(e.open)
+
+        return (
+        <Dialog.Root placement="center" lazyMount open={open} onOpenChange={openChange}>
+            <Portal>
+                <Dialog.Backdrop />
+                <Dialog.Positioner>
+                    <Dialog.Content>
+                        <Dialog.Header>
+                            <Dialog.Title>Create {{entity}}</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            <{{pascalCase entity}}Form onSubmit={handleSubmit} isSubmitting={isCreating}
+                                mode="create" />
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                            <Dialog.ActionTrigger asChild>
+                                <Button variant="outline">Cancel</Button>
+                            </Dialog.ActionTrigger>
+                            <Button>Save</Button>
+                        </Dialog.Footer>
+                        <Dialog.CloseTrigger asChild>
+                            <CloseButton size="sm" />
+                        </Dialog.CloseTrigger>
+                    </Dialog.Content>
+                </Dialog.Positioner>
+            </Portal>
+        </Dialog.Root>
+        )
+        }
