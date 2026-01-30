@@ -1,19 +1,21 @@
 {{!-- API Test Generator (Vitest + MSW) --}}
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { setupServer } from 'msw/node';
-import { http, HttpResponse } from 'msw';
-import { renderHook, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { baseApi } from '@/store/api/baseApi';
+import setupStore from '@/store';
+import { BASE_URL } from '@/store/api';
 import {
 useGet{{plural}}Query,
 useGet{{pascalCase entity}}Query,
 useCreate{{pascalCase entity}}Mutation,
 useUpdate{{pascalCase entity}}Mutation,
+{{camelCase entity}}Api,
 useDelete{{pascalCase entity}}Mutation,
 } from '@/store/{{camelCase entity}}/{{camelCase entity}}Api';
 import type { {{pascalCase entity}} } from '@/types/{{camelCase entity}}';
+import { renderHookWithProviders } from '@/utils/test-utils';
+import { waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+
 
 const mock{{pascalCase entity}}: {{pascalCase entity}} = {
 id: '1',
@@ -27,7 +29,7 @@ id: '1',
 };
 
 const server = setupServer(
-http.get('{{apiEndpoint}}', () => {
+http.get(`${BASE_URL}{{apiEndpoint}}`, () => {
 return HttpResponse.json({
 data: [mock{{pascalCase entity}}],
 success: true,
@@ -35,14 +37,14 @@ meta: { total: 1, page: 1, limit: 20 },
 });
 }),
 
-http.get('{{apiEndpoint}}/:id', ({ params }) => {
+http.get(`${BASE_URL}{{apiEndpoint}}/:id`, ({ params }) => {
 return HttpResponse.json({
 data: mock{{pascalCase entity}},
 success: true,
 });
 }),
 
-http.post('{{apiEndpoint}}', async ({ request }) => {
+http.post(`${BASE_URL}{{apiEndpoint}}`, async ({ request }) => {
 const body = await request.json();
 return HttpResponse.json({
 data: { ...mock{{pascalCase entity}}, ...body },
@@ -50,7 +52,7 @@ success: true,
 });
 }),
 
-http.put('{{apiEndpoint}}/:id', async ({ params, request }) => {
+http.put(`${BASE_URL}{{apiEndpoint}}/:id`, async ({ params, request }) => {
 const body = await request.json();
 return HttpResponse.json({
 data: { ...mock{{pascalCase entity}}, ...body },
@@ -58,35 +60,24 @@ success: true,
 });
 }),
 
-http.delete('{{apiEndpoint}}/:id', () => {
+http.delete(`${BASE_URL}{{apiEndpoint}}/:id`, () => {
 return HttpResponse.json({
 success: true,
 });
 })
 );
 
-const createTestStore = () =>
-configureStore({
-reducer: {
-[baseApi.reducerPath]: baseApi.reducer,
-},
-middleware: (getDefaultMiddleware) =>
-getDefaultMiddleware().concat(baseApi.middleware),
-});
-
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-<Provider store={createTestStore()}>{children}</Provider>
-);
-
 describe('{{camelCase entity}}Api', () => {
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+server.resetHandlers();
+setupStore().dispatch({{camelCase entity}}Api.util.resetApiState());
+});
 afterAll(() => server.close());
 
 describe('useGet{{plural}}Query', () => {
 it('should fetch {{camelCase entity}} list', async () => {
-const { result } = renderHook(() => useGet{{plural}}Query({ page: 1 }), { wrapper });
-
+const { result } = renderHookWithProviders(() => useGet{{plural}}Query({ page: 1 }));
 await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
 expect(result.current.data?.data).toHaveLength(1);
@@ -96,7 +87,7 @@ expect(result.current.data?.data[0].id).toBe('1');
 
 describe('useGet{{pascalCase entity}}Query', () => {
 it('should fetch single {{camelCase entity}}', async () => {
-const { result } = renderHook(() => useGet{{pascalCase entity}}Query('1'), { wrapper });
+const { result } = renderHookWithProviders(() => useGet{{pascalCase entity}}Query('1'));
 
 await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
@@ -106,13 +97,46 @@ expect(result.current.data?.data.id).toBe('1');
 
 describe('useCreate{{pascalCase entity}}Mutation', () => {
 it('should create a new {{camelCase entity}}', async () => {
-const { result } = renderHook(() => useCreate{{pascalCase entity}}Mutation(), { wrapper });
+const { result } = renderHookWithProviders(() => useCreate{{pascalCase entity}}Mutation());
 
 await result.current[0]({
 {{#each formFields}}
+{{#ifNeq name 'id'}}
+{{#ifNeq type 'computed'}}
 {{name}}: {{defaultValue}},
-{{/each}}
+{{/ifNeq}}
+{{/ifNeq}}
 });
+
+await waitFor(() => expect(result.current[1].isSuccess).toBe(true));
+});
+});
+
+describe('useUpdate{{pascalCase entity}}Mutation', () => {
+it('should update a {{camelCase entity}}', async () => {
+const { result } = renderHookWithProviders(() => useUpdate{{pascalCase entity}}Mutation());
+
+await result.current[0]({
+id: '1',
+data: {
+{{#each formFields}}
+{{#ifNeq name 'id'}}
+{{#ifNeq type 'computed'}}
+{{name}}: {{defaultValue}},
+{{/ifNeq}}
+{{/ifNeq}}
+},
+});
+
+await waitFor(() => expect(result.current[1].isSuccess).toBe(true));
+});
+});
+
+describe('useDelete{{pascalCase entity}}Mutation', () => {
+it('should delete a {{camelCase entity}}', async () => {
+const { result } = renderHookWithProviders(() => useDelete{{pascalCase entity}}Mutation());
+
+await result.current[0]('1');
 
 await waitFor(() => expect(result.current[1].isSuccess).toBe(true));
 });
