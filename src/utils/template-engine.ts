@@ -149,8 +149,14 @@ export class TemplateEngine {
      * Render a template with the given data
      */
     async render(templatePath: string, data: unknown): Promise<string> {
-        const template = await this.loadTemplate(templatePath);
-        return template(data);
+        console.log(`Rendering template: ${templatePath}`);
+        try {
+            const template = await this.loadTemplate(templatePath);
+            return template(data);
+        } catch (error) {
+            console.error(`Error rendering template ${templatePath}:`, error);
+            throw error;
+        }
     }
 
     /**

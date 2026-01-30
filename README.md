@@ -5,6 +5,8 @@ A CLI tool for generating CRUD boilerplate code for multi-tenant SaaS applicatio
 ## Features
 
 - 🚀 **Complete CRUD Generation** - Generate API, types, components, pages, hooks, and tests
+- 👷 **Interactive Scaffolding** - Create entity schemas via CLI wizard
+- 🧠 **Smart Schemas** - JSON schemas with VS Code Intellisense
 - 🎨 **Chakra UI v3** - Modern form components with Field.Root syntax
 - 📊 **RTK Query** - API slice generation with caching and optimistic updates
 - 📝 **Formik + Yup** - Form management with validation
@@ -27,24 +29,44 @@ npx crud-gen
 ```
 
 ## Quick Start
-
-### 1. Initialize in your project
-
 ```bash
-cd your-react-project
+# 1. Initialize
 crud-gen init
+
+# 2. Scout a new entity
+crud-gen scaffold User
+
+# 3. Generate code
+crud-gen generate schemas/user.json
 ```
 
-This creates:
-- `crud-gen.config.json` - Configuration file
-- `.crud-gen/` - Directory for tracking generated files
+---
 
-### 2. Create an entity schema
+## Commands
 
-Create `schemas/user.json`:
+### `crud-gen init`
+
+Initialize configuration in the current project. This will:
+- Create `crud-gen.config.json`
+- Create `.crud-gen/` directory
+- **Copy validation schemas** locally for Intellisense support
+
+Options:
+- `--force` - Overwrite existing configuration
+
+You can interactively create a schema using the CLI:
+
+```bash
+crud-gen scaffold User
+```
+
+This will guide you through creating fields and options, and generate a `schemas/user.json` file with **VS Code Intellisense support**.
+
+Or manually create `schemas/user.json`:
 
 ```json
 {
+  "$schema": ".crud-gen/schemas/entity.schema.json",
   "entity": "User",
   "plural": "Users",
   "route": "users",
@@ -66,8 +88,6 @@ Create `schemas/user.json`:
       "ui": {
         "form": {
           "component": "Input",
-          "type": "email",
-          "placeholder": "Enter email",
           "label": "Email Address"
         },
         "table": {
@@ -75,22 +95,6 @@ Create `schemas/user.json`:
           "sortable": true,
           "header": "Email"
         }
-      }
-    },
-    {
-      "name": "role",
-      "type": "string",
-      "validation": { "required": true },
-      "ui": {
-        "form": {
-          "component": "Select",
-          "label": "Role",
-          "options": [
-            { "label": "Admin", "value": "admin" },
-            { "label": "User", "value": "user" }
-          ]
-        },
-        "table": { "visible": true }
       }
     }
   ]
@@ -126,6 +130,18 @@ Initialize configuration in the current project.
 
 Options:
 - `--force` - Overwrite existing configuration
+
+### `crud-gen scaffold <entity-name>`
+
+Interactively create a new entity schema file with a guided wizard.
+
+Options:
+- `-o, --output <dir>` - Output directory (default: "schemas")
+
+Example:
+```bash
+crud-gen scaffold Product
+```
 
 ### `crud-gen generate <entity-file>`
 
