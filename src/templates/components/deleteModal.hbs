@@ -1,7 +1,7 @@
 {{!-- Delete Modal Component Generator --}}
 import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react"
 import { type Dispatch, type FC, type SetStateAction } from "react";
-import { Text, DialogOpenChangeDetails } from "@chakra-ui/react"
+import { Text, type DialogOpenChangeDetails } from "@chakra-ui/react"
 import { use{{pascalCase entity}} } from "@/hooks/use{{entity}}"
 import { toaster } from "@/components/ui/toaster"
 
@@ -20,6 +20,7 @@ setOpen: Dispatch<SetStateAction<boolean>>,
         title: "Operation Successful",
         description: "{{entity}} was deleted successfully"
         })
+        setOpen(false)
         }).catch(() => {
         toaster.error({
         title: "Operation Failed",
@@ -46,7 +47,7 @@ setOpen: Dispatch<SetStateAction<boolean>>,
                             <Dialog.ActionTrigger asChild>
                                 <Button variant="outline">Cancel</Button>
                             </Dialog.ActionTrigger>
-                            <Button colorPalette="red" onClick={handleDelete} isLoading={isDeleting}>Delete</Button>
+                            <Button colorPalette="red" onClick={handleDelete} loading={isDeleting}>Delete</Button>
                         </Dialog.Footer>
                         <Dialog.CloseTrigger asChild>
                             <CloseButton size="sm" />

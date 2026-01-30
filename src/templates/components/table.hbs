@@ -1,26 +1,32 @@
 {{!-- Table Component Generator (TanStack React Table) --}}
 import { useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { Button, HStack, IconButton, Portal } from '@chakra-ui/react';
+import { IconButton, Portal, Menu } from '@chakra-ui/react';
+{{#if mutationUIisPage}}
 import { useNavigate } from 'react-router-dom';
-import { DataTable } from '@/components/ui/DataTable';
-import { LuMoreVertical } from 'react-icons/lu';
+{{/if}}
+import { TableComponent } from '@/components/ui/datatable';
 import type { {{pascalCase entity}} } from '@/types/{{camelCase entity}}';
-import { useGet{{plural}}Query, useDelete{{pascalCase entity}}Mutation } from '@/store/{{camelCase
-entity}}/{{camelCase entity}}Api';
+import { use{{pascalCase entity}} } from '@/hooks/use{{entity}}';
+import { CgMoreVertical } from 'react-icons/cg';
 {{#if mutationUIisModal}}
-import { Edit{{pascalCase entity}}Modal } from './Edit{{pascalCase entity}}Modal';
-import { Delete{{pascalCase entity}}Modal } from './Delete{{pascalCase entity}}Modal';
+import { Edit{{pascalCase entity}}Modal } from './{{entity}}EditModal';
+import { Delete{{pascalCase entity}}Modal } from './{{entity}}DeleteModal';
 {{/if}}
 {{#if mutationUIisDrawer}}
-import { Edit{{pascalCase entity}}Drawer } from './Edit{{pascalCase entity}}Drawer';
-import { Delete{{pascalCase entity}}Drawer } from './Delete{{pascalCase entity}}Drawer';
+import { Edit{{pascalCase entity}}Drawer } from './{{entity}}EditDrawer';
+import { Delete{{pascalCase entity}}Drawer } from './{{entity}}DeleteDrawer';
 {{/if}}
+{{#ifEq views.details.type 'modal'}}
+import { View{{pascalCase entity}}Modal } from './{{entity}}ViewModal';
+{{/ifEq}}
 
 const columnHelper = createColumnHelper<{{pascalCase entity}}>();
 
     export const {{pascalCase entity}}Table = () => {
+    {{#if mutationUIisPage}}
     const navigate = useNavigate();
+    {{/if}}
     const [page, setPage] = useState(1);
     const {useList, goToEdit, goToDetails} = use{{pascalCase entity}}();
 
@@ -32,8 +38,10 @@ const columnHelper = createColumnHelper<{{pascalCase entity}}>();
         const [openDeleteModal, setOpenDeleteModal] = useState(false);
         const [editId, setEditId] = useState<string | null>(null);
             const [openEditModal, setOpenEditModal] = useState(false);
+            {{#ifEq views.details.type 'modal'}}
             const [viewId, setViewId] = useState<string | null>(null);
                 const [openViewModal, setOpenViewModal] = useState(false);
+            {{/ifEq}}
 
                 const setEdit = (id: string) => {
                 {{#if mutationUIisModal}}
@@ -46,21 +54,26 @@ const columnHelper = createColumnHelper<{{pascalCase entity}}>();
                 }
 
                 const setView = (id: string) => {
-                {{#if mutationUIisModal}}
+                {{#ifEq views.details.type 'modal'}}
                 setViewId(id)
                 setOpenViewModal(true)
-                {{/if}}
-                {{#if mutationUIisPage}}
+                {{/ifEq}}
+                {{#ifEq views.details.type 'page'}}
                 goToDetails(id)
-                {{/if}}
+                {{/ifEq}}
                 }
 
-                const Menu = (id: string) => {
+                const setDelete = (id: string) => {
+                setDeleteId(id)
+                setOpenDeleteModal(true)
+                }
+
+                const MoreMenu = ({id}: {id: string}) => {
                 return (
                 <Menu.Root>
                     <Menu.Trigger asChild>
-                        <IconButton aria-label="Table Actions" variant="surface">
-                            <LuMoreVertical />
+                        <IconButton aria-label="Table Actions" variant="ghost">
+                            <CgMoreVertical />
                         </IconButton>
                     </Menu.Trigger>
                     <Portal>
@@ -76,7 +89,7 @@ const columnHelper = createColumnHelper<{{pascalCase entity}}>();
                                     Edit
                                 </Menu.Item>
                                 <Menu.Separator />
-                                <Menu.Item value="delete" onClick={()=> setDeleteId(id)}>
+                                <Menu.Item value="delete" color="fg.error" _hover={ { bg: "bg.error" , color: "fg.error" } } onClick={()=> setDelete(id)}>
                                     Delete
                                 </Menu.Item>
                             </Menu.Content>
@@ -101,7 +114,7 @@ const columnHelper = createColumnHelper<{{pascalCase entity}}>();
                 id: 'actions',
                 header: 'Actions',
                 cell: ({ row }) => (
-                <Menu id={row.original.id} />
+                <MoreMenu id={row.original.id} />
                 ),
                 }),
                 ],
@@ -110,26 +123,23 @@ const columnHelper = createColumnHelper<{{pascalCase entity}}>();
 
                 return (
                 <>
-                    <DataTable columns={columns} data={data?.data || []} isLoading={isLoading || isFetching}
-                        pagination={ { page, limit: {{pagination.defaultPageSize}}, total: data?.meta?.total || 0,
-                        onPageChange: setPage, } } />
+                    <TableComponent columns={columns} data={data?.data || []} isLoading={isLoading || isFetching} pagination={ { page, limit: {{pagination.defaultPageSize}}, total: data?.meta?.total || 0, onPageChange: setPage, } } />
 
-                    {{#ifeq views.details.type 'modal'}}
-                    <View{{pascalCase entity}}Modal open={openViewModal} setOpen={setOpenViewModal} id={viewId} />
-                    {{/ifeq}}
+                    {{#ifEq views.details.type 'modal'}}
+                    {viewId && openViewModal && <View{{pascalCase entity}}Modal open={openViewModal} setOpen={setOpenViewModal} id={viewId as string} />}
+                    {{/ifEq}}
 
                     {{!-- render the drawer if the mutationUIisDrawer is true --}}
-                    {{#ifeq mutationUIisDrawer true}}
-                    <Edit{{pascalCase entity}}Drawer open={openEditModal} setOpen={setOpenEditModal} id={editId} />
-                    {{/ifeq}}
+                    {{#ifEq mutationUIisDrawer true}}
+                    {editId && openEditModal && <Edit{{pascalCase entity}}Drawer open={openEditModal} setOpen={setOpenEditModal} id={editId as string} />}
+                    {{/ifEq}}
 
                     {{!-- render the modal if the mutationUIisModal is true --}}
-                    {{#ifeq mutationUIisModal true}}
-                    <Edit{{pascalCase entity}}Modal open={openEditModal} setOpen={setOpenEditModal} id={editId} />
-                    {{/ifeq}}
+                    {{#ifEq mutationUIisModal true}}
+                    {editId && openEditModal && <Edit{{pascalCase entity}}Modal open={openEditModal} setOpen={setOpenEditModal} id={editId as string} />}
+                    {{/ifEq}}
 
-                    <Delete{{pascalCase entity}}Modal open={openDeleteModal} setOpen={setOpenDeleteModal}
-                        id={deleteId} />
+                    {deleteId && openDeleteModal && <Delete{{pascalCase entity}}Modal open={openDeleteModal} setOpen={setOpenDeleteModal} id={deleteId as string} />}
                 </>
                 );
                 };

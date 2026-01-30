@@ -7,7 +7,7 @@ export interface EntityConfig {
     apiEndpoint: string;
     tenantScoped?: boolean;
     pagination?: PaginationConfig;
-    views?: ViewsConfig;
+    views: ViewsConfig;
     fields: FieldConfig[];
 }
 
@@ -17,9 +17,9 @@ export interface PaginationConfig {
 }
 
 export interface ViewsConfig {
-    list?: ListViewConfig;
-    details?: DetailsViewConfig | boolean;
-    "create/edit"?: DetailsViewConfig;
+    list: ListViewConfig;
+    details: DetailsViewConfig | boolean;
+    "create/edit": DetailsViewConfig;
 }
 
 export interface ListViewConfig {

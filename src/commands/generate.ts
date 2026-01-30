@@ -149,10 +149,16 @@ export async function generateCommand(
 
         // Generate component barrel export
         const entityLower = camelCase(entity.entity);
+        //         const componentIndexContent = `export { ${entity.entity}Form } from './${entity.entity}Form.js';
+        // export { ${entity.entity}Table } from './${entity.entity}Table.js';
+        // export { ${entity.entity}Details } from './${entity.entity}Details.js';
+        // `;
+        // updated barrel export content
         const componentIndexContent = `export { ${entity.entity}Form } from './${entity.entity}Form.js';
 export { ${entity.entity}Table } from './${entity.entity}Table.js';
 export { ${entity.entity}Details } from './${entity.entity}Details.js';
 `;
+
         const componentIndexPath = `${config.paths.components}/${entityLower}/index.ts`;
         await fileManager.safeWrite(componentIndexPath, componentIndexContent, options.force);
 

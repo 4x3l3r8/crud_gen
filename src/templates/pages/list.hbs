@@ -1,21 +1,58 @@
 {{!-- List Page Generator --}}
 import { Button, Heading, Stack, HStack } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
+{{#if mutationUIisPage}}
+import {
+useNavigate,
+} from 'react-router-dom';
+{{/if}}
+{{#if mutationUIisModal}}
+import { useState } from 'react';
+{{/if}}
 import { {{pascalCase entity}}Table } from '@/components/{{camelCase entity}}/{{camelCase entity}}Table';
+{{#if mutationUIisModal}}
+import { Create{{pascalCase entity}}Modal } from '@/components/{{camelCase entity}}/{{camelCase entity}}CreateModal';
+{{/if}}
+{{#if mutationUIisDrawer}}
+import { Create{{pascalCase entity}}Drawer } from '@/components/{{camelCase entity}}/{{camelCase entity}}CreateDrawer';
+{{/if}}
 
 export default function {{plural}}Page() {
+{{#if mutationUIisPage}}
 const navigate = useNavigate();
+{{/if}}
+
+{{#if mutationUIisModal}}
+const [openCreateModal, setOpenCreateModal] = useState(false);
+{{/if}}
+
+const setCreate = () => {
+{{#if mutationUIisModal}}
+setOpenCreateModal(true);
+{{/if}}
+{{#if mutationUIisPage}}
+navigate('/{{route}}/create');
+{{/if}}
+}
 
 return (
 <Stack gap={6}>
     <HStack justify="space-between" align="center">
-        <Heading size="lg">{{plural}}</Heading>
-        <Button colorPalette="blue" onClick={()=> navigate('/{{route}}/create')}>
-            Create {{entity}}
+        <Heading size="lg">{{upperCase plural}}</Heading>
+        <Button colorPalette="blue" onClick={()=> setCreate()}>
+            Create {{upperCase entity}}
         </Button>
     </HStack>
 
     <{{pascalCase entity}}Table />
+
+    {{#ifEq mutationUIisDrawer true}}
+    <Create{{pascalCase entity}}Drawer open={openCreateModal} setOpen={setOpenCreateModal} />
+    {{/ifEq}}
+
+    {{!-- render the modal if the mutationUIisModal is true --}}
+    {{#ifEq mutationUIisModal true}}
+    <Create{{pascalCase entity}}Modal open={openCreateModal} setOpen={setOpenCreateModal} />
+    {{/ifEq}}
 </Stack>
 );
 }

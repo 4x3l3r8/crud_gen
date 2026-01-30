@@ -1,9 +1,10 @@
 {{!-- Edit Modal Component Generator --}}
 import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react"
 import { type Dispatch, type FC, type SetStateAction } from "react";
-import { {{pascalCase entity}}Form } from '@/components/{{camelCase entity}}/{{pascalCase entity}}Form';
+import { {{pascalCase entity}}Form } from '@/components/{{camelCase entity}}/{{entity}}Form';
 import { use{{pascalCase entity}} } from "@/hooks/use{{entity}}"
 import { toaster } from "@/components/ui/toaster"
+import type { Update{{pascalCase entity}}Dto } from "@/types/{{entity}}"
 import { type DialogOpenChangeDetails } from "@chakra-ui/react"
 
 interface ModalComponentProps {
@@ -17,12 +18,13 @@ setOpen: Dispatch<SetStateAction<boolean>>
 
         const {data, isLoading: isLoadingDetails} = useDetails(id as string)
 
-        const handleSubmit = async (values: Edit{{pascalCase entity}}Dto) => {
+        const handleSubmit = async (values: Update{{pascalCase entity}}Dto) => {
         update(id, values).then(() => {
         toaster.success({
         title: "Operation Successful",
-        description: "{{uppercase entity}} was updated successfully"
+        description: "{{upperCase entity}} was updated successfully"
         })
+        setOpen(false)
         }).catch(() => {
         toaster.error({
         title: "Operation Failed",

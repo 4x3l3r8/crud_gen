@@ -2,7 +2,7 @@
 import { baseApi } from '@/store/api';
 import type { {{pascalCase entity}}, Create{{pascalCase entity}}Dto, Update{{pascalCase entity}}Dto } from
 '@/types/{{camelCase entity}}';
-import type { ApiResponse, ListParams } from '@/types/common';
+import type { ApiResponse, ListParams } from '@/types';
 
 export const {{camelCase entity}}Api = baseApi.injectEndpoints({
 endpoints: (builder) => ({

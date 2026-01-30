@@ -1,7 +1,7 @@
 // Pages Generator - Page components for list, create, edit, details
 
 import { BaseGenerator } from './base.js';
-import type { EntityConfig } from '../types/entity.js';
+import type { DetailsViewConfig, EntityConfig } from '../types/entity.js';
 import type { GenerateOptions } from '../types/generator.js';
 
 export class PagesGenerator extends BaseGenerator {
@@ -18,22 +18,26 @@ export class PagesGenerator extends BaseGenerator {
         const listPath = this.getOutputPath(entity, 'page', 'index.tsx');
         await this.fileManager.safeWrite(listPath, formattedList, options.force);
 
-        // Generate create page
-        const createContent = await this.templateEngine.render('pages/create', templateData);
-        const formattedCreate = await this.formatCode(createContent);
-        const createPath = this.getOutputPath(entity, 'page', 'create.tsx');
-        await this.fileManager.safeWrite(createPath, formattedCreate, options.force);
+        if ((entity.views["create/edit"] as DetailsViewConfig).type === 'page') {
+            // Generate create page
+            const createContent = await this.templateEngine.render('pages/create', templateData);
+            const formattedCreate = await this.formatCode(createContent);
+            const createPath = this.getOutputPath(entity, 'page', 'create.tsx');
+            await this.fileManager.safeWrite(createPath, formattedCreate, options.force);
 
-        // Generate edit page
-        const editContent = await this.templateEngine.render('pages/edit', templateData);
-        const formattedEdit = await this.formatCode(editContent);
-        const editPath = this.getOutputPath(entity, 'page', '[id]/edit.tsx');
-        await this.fileManager.safeWrite(editPath, formattedEdit, options.force);
+            // Generate edit page
+            const editContent = await this.templateEngine.render('pages/edit', templateData);
+            const formattedEdit = await this.formatCode(editContent);
+            const editPath = this.getOutputPath(entity, 'page', '[id]/edit.tsx');
+            await this.fileManager.safeWrite(editPath, formattedEdit, options.force);
+        }
 
         // Generate details page
-        const detailsContent = await this.templateEngine.render('pages/details', templateData);
-        const formattedDetails = await this.formatCode(detailsContent);
-        const detailsPath = this.getOutputPath(entity, 'page', '[id]/index.tsx');
-        await this.fileManager.safeWrite(detailsPath, formattedDetails, options.force);
+        if ((entity.views.details as DetailsViewConfig).type === 'page') {
+            const detailsContent = await this.templateEngine.render('pages/details', templateData);
+            const formattedDetails = await this.formatCode(detailsContent);
+            const detailsPath = this.getOutputPath(entity, 'page', '[id]/index.tsx');
+            await this.fileManager.safeWrite(detailsPath, formattedDetails, options.force);
+        }
     }
 }

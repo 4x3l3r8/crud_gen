@@ -1,9 +1,9 @@
 {{!-- View Modal Component --}}
 import { Dialog, Portal } from "@chakra-ui/react"
 import { type Dispatch, type FC, type SetStateAction } from "react";
-import { Button, CloseButton } from "@chakra-ui/react"
-import { DialogOpenChangeDetails } from "@chakra-ui/react"
-import { use{{pascalCase entity}} } from "@/hooks/use{{pascalCase entity}}"
+import { Button, CloseButton, Box, Text } from "@chakra-ui/react"
+import { type DialogOpenChangeDetails } from "@chakra-ui/react"
+import { use{{pascalCase entity}} } from "@/hooks/use{{entity}}"
 
 interface ModalComponentProps {
 open: boolean;
@@ -11,7 +11,7 @@ setOpen: Dispatch<SetStateAction<boolean>>
     id: string;
     }
 
-    export const {{pascalCase entity}}ViewModal:FC<ModalComponentProps> = ({ open, setOpen, id }) => {
+    export const View{{pascalCase entity}}Modal:FC<ModalComponentProps> = ({ open, setOpen, id }) => {
         const { useDetails } = use{{pascalCase entity}}();
 
         const { data, isLoading } = useDetails(id as string);
@@ -39,7 +39,7 @@ setOpen: Dispatch<SetStateAction<boolean>>
                                 <Text fontWeight="semibold" color="gray.600">
                                     {{#if ui.table.header}}{{ui.table.header}}{{else}}{{name}}{{/if}}
                                 </Text>
-                                <Text>{ {{camelCase entity}}.{{name}} }</Text>
+                                <Text>{ data?.data?.{{name}} }</Text>
                             </Box>
                             {{/ifNeq}}
                             {{/each}}

@@ -31,6 +31,7 @@ interface ViewsAnswers {
 }
 
 export async function scaffoldCommand(entityName: string, options: ScaffoldOptions): Promise<void> {
+
     console.log(chalk.blue(`\n🏗️  Scaffolding entity: ${entityName}\n`));
 
     try {
@@ -333,7 +334,20 @@ function promptForViewsConfig(): Promise<ViewsAnswers> {
 }
 
 function buildViewsConfig(answers: ViewsAnswers): ViewsConfig {
-    const views: ViewsConfig = {};
+    // initilized the views config
+    const views: ViewsConfig = {
+        list: {
+            type: answers.list,
+            defaultView: answers.list as "table" | "grid",
+        },
+        details: {
+            type: answers.details,
+        },
+        "create/edit": {
+            type: answers.createEdit,
+        },
+    };
+
     if (answers.list) {
         views.list = {
             type: answers.list,

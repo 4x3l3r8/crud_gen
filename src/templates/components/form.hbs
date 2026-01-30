@@ -1,5 +1,5 @@
 {{!-- Form Component Generator (Chakra UI v3 + Formik) --}}
-import { Button, Input, Textarea, Stack } from '@chakra-ui/react';
+import { Button, Input, Stack } from '@chakra-ui/react';
 import { Field } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -87,7 +87,7 @@ initialValues?: Partial<Create{{pascalCase entity}}Dto>;
                     </Field.Root>
                     {{/each}}
 
-                    <Button type="submit" colorPalette="blue" loading={isSubmitting}>
+                    <Button type="submit" data-testid="submit-button" colorPalette="blue" loading={isSubmitting}>
                         {mode === 'create' ? 'Create {{entity}}' : 'Update {{entity}}'}
                     </Button>
                 </Stack>
